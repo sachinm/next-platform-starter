@@ -30,7 +30,7 @@ describe('GraphQL Netlify Function', () => {
 
     createYoga.mockReturnValue(mockYoga);
 
-    const { default: handler } = await import('./graphql');
+    const { default: handler } = await import('../../netlify/functions/graphql');
 
     const request = new Request('http://localhost/graphql', { method: 'POST' });
 
@@ -57,7 +57,7 @@ describe('GraphQL Netlify Function', () => {
     createYoga.mockReturnValue(mockYoga);
 
     // Re-import to get fresh module with new mock
-    const { default: handler } = await import('./graphql');
+    const { default: handler } = await import('../../netlify/functions/graphql');
 
     const request = new Request('http://localhost/graphql', { method: 'POST' });
 

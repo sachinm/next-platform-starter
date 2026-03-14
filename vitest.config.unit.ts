@@ -4,7 +4,7 @@ import path from 'path';
 export default defineConfig({
   test: {
     environment: 'node',
-    include: ['backend/tests/unit/**/*.test.ts', 'shared/**/*.test.ts', 'netlify/functions/**/*.test.ts'],
+    include: ['backend/tests/unit/**/*.test.ts', 'shared/**/*.test.ts', 'netlify/functions/**/*.test.ts', 'tests/netlify-functions/**/*.test.ts'],
     exclude: ['node_modules', 'frontend', 'components', 'app'],
     env: {
       JWT_SECRET: 'test-jwt-secret-at-least-32-characters-long-for-unit-tests',
