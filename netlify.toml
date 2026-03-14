@@ -2,10 +2,10 @@
   publish = ".next"
   command = "npm run build"
 
-[[functions]]
+[functions]
   directory = "netlify/functions"
 
-# Scheduled function for Kundli sync (runs every 6 hours)
-[[functions.schedules]]
+# Scheduled function for Kundli sync (runs every 5 minutes)
+[functions.schedules]
   function = "kundli-sync"
-  cron = "0 */6 * * *"
+  cron = "*/5 * * * *"
