@@ -2,6 +2,14 @@
   publish = ".next"
   command = "npm run build"
 
+[build.environment]
+  # Required environment variables for the application
+  # Set these in Netlify dashboard: Site Settings > Environment Variables
+  # JWT_SECRET = "your-32-character-or-longer-secret-here"
+  # DATABASE_URL = "your-postgresql-connection-string"
+  # DIRECT_URL = "your-postgresql-direct-connection-string"
+  # ENCRYPTION_KEY = "32-byte-hex-or-base64-key-for-pii-encryption"  # Optional
+
 [functions]
   directory = "netlify/functions"
 

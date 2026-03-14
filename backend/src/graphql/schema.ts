@@ -722,7 +722,18 @@ const resolvers = {
       { username, password }: { username: string; password: string },
       _context: GraphQLContext
     ) {
-      return login(username, password);
+      try {
+        return await login(username, password);
+      } catch (err) {
+        console.error('Login error:', err);
+        return {
+          success: false,
+          message: 'Login failed due to server configuration. Please check that JWT_SECRET is properly configured.',
+          token: null,
+          user: null,
+          role: null,
+        };
+      }
     },
     async signup(
       _parent: unknown,
