@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Star, LogOut, BarChart3, Heart, BookOpen, MessageCircle, AlertTriangle } from 'lucide-react';
+import { Star, LogOut, BarChart3, Heart, BookOpen, MessageCircle } from 'lucide-react';
 import { useRouter, usePathname } from 'next/navigation';
 import { useAuth } from './AuthProvider';
 
@@ -70,14 +70,6 @@ const TopNavigation: React.FC = () => {
             </button>
           </div>
         </div>
-
-        {/* ✅ Error Banner */}
-        {errorMessage && (
-          <div className="bg-red-500/20 border-t border-red-500/30 py-2 px-4 flex items-center space-x-2 text-red-300 text-sm">
-            <AlertTriangle className="w-4 h-4" />
-            <span>{errorMessage || "This task is not possible at this moment"}</span>
-          </div>
-        )}
 
         {/* Mobile Navigation */}
         <div className="md:hidden pb-4">
