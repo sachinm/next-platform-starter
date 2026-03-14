@@ -3,6 +3,15 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
+function setCookie(name: string, value: string, days = 7) {
+  const expires = new Date(Date.now() + days * 864e5).toUTCString();
+  document.cookie = `${name}=${encodeURIComponent(value)}; expires=${expires}; path=/`;
+}
+
+function deleteCookie(name: string) {
+  document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/`;
+}
+
 export interface User {
   name: string;
   email: string;
@@ -16,7 +25,7 @@ interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
   handleSignIn: (userData?: User) => void;
-  handleSignUp: (userData: User) => void;
+  handleSignUp: (userData?: User) => void;
   handleLogout: () => void;
 }
 
@@ -51,17 +60,29 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     if (userData) {
       setUser(userData);
       localStorage.setItem('astroUser', JSON.stringify(userData));
-    } else {
-      const savedUser = localStorage.getItem('astroUser');
-      if (savedUser) {
-        setUser(JSON.parse(savedUser));
-      }
+      setIsAuthenticated(true);
+      router.push('/dashboard');
+      return;
     }
-    setIsAuthenticated(true);
-    router.push('/dashboard');
+
+    const savedUser = localStorage.getItem('astroUser');
+    if (savedUser) {
+      setUser(JSON.parse(savedUser));
+      setIsAuthenticated(true);
+      router.push('/dashboard');
+      return;
+    }
+
+    // No user data found; redirect to sign in.
+    router.push('/signin');
   };
 
-  const handleSignUp = (userData: User) => {
+  const handleSignUp = (userData?: User) => {
+    if (!userData) {
+      router.push('/signup');
+      return;
+    }
+
     setUser(userData);
     setIsAuthenticated(true);
     localStorage.setItem('astroUser', JSON.stringify(userData));
@@ -73,6 +94,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     setUser(null);
     setIsAuthenticated(false);
     localStorage.removeItem('astroUser');
+    localStorage.removeItem('authToken');
+    deleteCookie('authToken');
     router.push('/');
   };
 

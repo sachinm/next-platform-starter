@@ -1,46 +1,84 @@
 import { NextResponse } from 'next/server';
 
-export function middleware(request) {
+// Simple JWT verifier for HS256 using Web Crypto (Edge runtime compatible)
+async function verifyJwt(token, secret) {
+  if (!token || !secret) return false;
+  const parts = token.split('.');
+  if (parts.length !== 3) return false;
+
+  const [headerB64, payloadB64, signatureB64] = parts;
+
+  const decode = (str) => {
+    const padded = str.padEnd(str.length + (4 - (str.length % 4)) % 4, '=');
+    const decoded = atob(padded.replace(/-/g, '+').replace(/_/g, '/'));
+    return decoded;
+  };
+
+  const encoder = new TextEncoder();
+  const keyData = encoder.encode(secret);
+  const key = await crypto.subtle.importKey(
+    'raw',
+    keyData,
+    { name: 'HMAC', hash: 'SHA-256' },
+    false,
+    ['verify']
+  );
+
+  const signature = Uint8Array.from(atob(signatureB64.replace(/-/g, '+').replace(/_/g, '/')), (c) => c.charCodeAt(0));
+  const data = encoder.encode(`${headerB64}.${payloadB64}`);
+
+  const isValid = await crypto.subtle.verify('HMAC', key, signature, data);
+  if (!isValid) return false;
+
+  try {
+    const payloadJson = JSON.parse(decode(payloadB64));
+    const now = Math.floor(Date.now() / 1000);
+    if (payloadJson.exp && now >= payloadJson.exp) return false;
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+const PUBLIC_PATHS = ['/', '/signin', '/signup', '/favicon.svg', '/_next'];
+
+export async function middleware(request) {
   const response = NextResponse.next();
-  
-  // Add security headers
+
+  // Security headers
   response.headers.set('X-Frame-Options', 'DENY');
   response.headers.set('X-Content-Type-Options', 'nosniff');
   response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
-  
-  // Add custom header to track middleware execution
   response.headers.set('X-Middleware-Executed', 'true');
-  
+
   const pathname = request.nextUrl.pathname;
-  
-  // Logging for demonstration (in production, use proper logging service)
+
+  // Logging for demonstration
   console.log(`[Middleware] ${request.method} ${pathname} - ${new Date().toISOString()}`);
-  
-  // Example: Block access to /admin paths (demonstration only)
-  if (pathname.startsWith('/admin')) {
-    const url = request.nextUrl.clone();
-    url.pathname = '/';
-    response.headers.set('X-Blocked-Path', pathname);
-    return NextResponse.redirect(url);
+
+  // Always allow public paths
+  if (PUBLIC_PATHS.some((p) => pathname === p || pathname.startsWith(p + '/'))) {
+    return response;
   }
-  
-  // Example: Add custom header for API routes
-  if (pathname.startsWith('/api/') || pathname.startsWith('/quotes/')) {
-    response.headers.set('X-API-Version', '1.0');
+
+  // Only protect dashboard routes
+  if (pathname.startsWith('/dashboard')) {
+    const token = request.cookies.get('authToken')?.value;
+    const secret = process.env.JWT_SECRET;
+
+    const valid = await verifyJwt(token, secret);
+    if (!valid) {
+      const url = request.nextUrl.clone();
+      url.pathname = '/signin';
+      return NextResponse.redirect(url);
+    }
   }
-  
+
   return response;
 }
 
 export const config = {
   matcher: [
-    /*
-     * Match all request paths except for the ones starting with:
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.svg (favicon file)
-     * - public files (images, etc.)
-     */
     '/((?!_next/static|_next/image|favicon.svg|images|.*\\.svg|.*\\.png|.*\\.jpg).*)',
   ],
 };

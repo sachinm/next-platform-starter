@@ -18,6 +18,12 @@ export default async function handler(request: Request) {
   console.log('Yoga response headers type:', typeof yogaResponse?.headers);
   console.log('Yoga response body type:', typeof yogaResponse?.body);
 
+  // If Yoga returns null/undefined, return a 500 instead of throwing.
+  if (!yogaResponse) {
+    console.error('Yoga returned null/undefined response');
+    return new Response('Internal Server Error', { status: 500 });
+  }
+
   // Netlify expects a native Web Fetch Response instance. Yoga may return a Response
   // from a different implementation (e.g., undici). Wrap into a native Response to
   // ensure Netlify accepts it.

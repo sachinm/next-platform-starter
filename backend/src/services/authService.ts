@@ -51,25 +51,36 @@ export function issueToken(userId: string, role = 'user'): string {
  * Login: validate credentials and return { success, token, user } or { success: false, message }.
  */
 export async function login(username: string, password: string): Promise<LoginResult> {
-  const parsed = validateLoginInput({ username, password });
-  if (!parsed.success) {
-    return { success: false, message: 'Invalid input' };
+  try {
+    const parsed = validateLoginInput({ username, password });
+    if (!parsed.success) {
+      return { success: false, message: 'Invalid input' };
+    }
+    const { username: u, password: p } = parsed.data;
+    const user = await validateLogin(u, p);
+    if (!user) {
+      return { success: false, message: 'Invalid username or password' };
+    }
+    await enqueueKundliSync(prisma, user.id).catch((err) => {
+      console.error('enqueueKundliSync after login failed:', (err as Error).message);
+    });
+    const token = issueToken(user.id, user.role ?? 'user');
+    return {
+      success: true,
+      token,
+      user: user.id,
+      role: user.role ?? 'user',
+    };
+  } catch (err) {
+    console.error('Login failed:', err);
+    return {
+      success: false,
+      message:
+        err instanceof Error
+          ? err.message
+          : 'Unexpected error during login. Please contact support.',
+    };
   }
-  const { username: u, password: p } = parsed.data;
-  const user = await validateLogin(u, p);
-  if (!user) {
-    return { success: false, message: 'Invalid username or password' };
-  }
-  await enqueueKundliSync(prisma, user.id).catch((err) => {
-    console.error('enqueueKundliSync after login failed:', (err as Error).message);
-  });
-  const token = issueToken(user.id, user.role ?? 'user');
-  return {
-    success: true,
-    token,
-    user: user.id,
-    role: user.role ?? 'user',
-  };
 }
 
 export type SignUpInput = z.infer<typeof signUpSchema>;

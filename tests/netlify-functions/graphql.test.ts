@@ -61,7 +61,9 @@ describe('GraphQL Netlify Function', () => {
 
     const request = new Request('http://localhost/graphql', { method: 'POST' });
 
-    // This should throw due to null access, which is expected behavior
-    await expect(handler(request)).rejects.toThrow('Cannot read properties of');
-  });
-});
+    const response = await handler(request);
+
+    expect(response.status).toBe(500);
+    const body = await response.text();
+    expect(body).toContain('Internal Server Error');
+  });});
