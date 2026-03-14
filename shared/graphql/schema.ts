@@ -1,10 +1,10 @@
 import { createSchema } from 'graphql-yoga';
 import type { Prisma } from '@prisma/client';
-import { login, signup } from '../../services/authService.js';
-import { runRagQuery, processKundliUpload } from '../../services/kundliService.js';
-import { chatWithGroq } from '../../services/groqChatService.js';
-import * as adminService from '../../services/adminService.js';
-import { enqueueKundliSync } from '../../services/kundliQueueService.js';
+import { login, signup } from '../services/authService.js';
+import { runRagQuery, processKundliUpload } from '../services/kundliService.js';
+import { chatWithGroq } from '../services/groqChatService.js';
+import * as adminService from '../services/adminService.js';
+import { enqueueKundliSync } from '../services/kundliQueueService.js';
 import { requireRoles } from './rbac.js';
 import { ALL_AUTHENTICATED_ROLES } from './rbac.js';
 import type { GraphQLContext } from './context.js';

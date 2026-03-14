@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken';
-import { prisma } from '../../lib/prisma.js';
+import { prisma } from '../lib/prisma.js';
 import type { PrismaClient } from '@prisma/client';
 
 export function getJwtSecret(): string {

@@ -1,13 +1,13 @@
 import type { PrismaClient } from '@prisma/client';
-import { prisma } from '../../lib/prisma.js';
+import { prisma } from '../lib/prisma.js';
 import jwt from 'jsonwebtoken';
 import { getJwtSecret } from '../graphql/context.js';
-import { hashPassword, comparePassword } from '../../lib/hash.js';
-import { encrypt } from '../../lib/encrypt.js';
-import { validateLoginInput, validateSignUpInput } from '../../lib/validators.js';
+import { hashPassword, comparePassword } from '../lib/hash.js';
+import { encrypt } from '../lib/encrypt.js';
+import { validateLoginInput, validateSignUpInput } from '../lib/validators.js';
 import { enqueueKundliSync } from './kundliQueueService.js';
 import type { z } from 'zod';
-import type { signUpSchema } from '../../lib/validators.js';
+import type { signUpSchema } from '../lib/validators.js';
 
 const DEFAULT_EXPIRY = '7d';
 

@@ -3,8 +3,8 @@ import cosineSimilarity from 'compute-cosine-similarity';
 import {
   fetchLatestKundliForUser,
   kundliRowToChunks,
-} from '../../kundli-rag.js';
-import { createJSONLLMClient, getLLMClient } from '../../lib/llmClient.js';
+} from '../kundli-rag.js';
+import { createJSONLLMClient, getLLMClient } from '../lib/llmClient.js';
 import { HumanMessage, SystemMessage } from '@langchain/core/messages';
 import type { PrismaClient } from '@prisma/client';
 

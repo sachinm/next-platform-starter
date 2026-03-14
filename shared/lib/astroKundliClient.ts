@@ -1,5 +1,5 @@
 import type { Prisma } from '@prisma/client';
-import { getAstroKundliBaseUrl, getAstroKundliApiKey, isAstroKundliLogResponseEnabled } from '../../config/env.js';
+import { getAstroKundliBaseUrl, getAstroKundliApiKey, isAstroKundliLogResponseEnabled } from '../config/env.js';
 import { decrypt } from './encrypt.js';
 import { queueLog } from './queueLogger.js';
 

@@ -4,9 +4,9 @@ import {
   type KundliJsonField,
   fetchHoroscopeChart,
   authToAstroKundliParams,
-} from '../../lib/astroKundliClient.js';
-import { getNodeEnv, getAstroKundliBaseUrl } from '../../config/env.js';
-import { queueLog, queueLogError } from '../../lib/queueLogger.js';
+} from '../lib/astroKundliClient.js';
+import { getNodeEnv, getAstroKundliBaseUrl } from '../config/env.js';
+import { queueLog, queueLogError } from '../lib/queueLogger.js';
 
 const QUEUE_STATUS_PENDING = 'pending';
 const QUEUE_STATUS_IN_PROGRESS = 'in_progress';
