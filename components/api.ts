@@ -1,6 +1,6 @@
 const GRAPHQL_ENDPOINT = '/.netlify/functions/graphql';
 
-async function runGraphQL<T = any>(query: string, variables?: Record<string, any>): Promise<{ data?: T; errors?: any[] }> {
+export async function runGraphQL<T = any>(query: string, variables?: Record<string, any>): Promise<{ data?: T; errors?: any[] }> {
   const response = await fetch(GRAPHQL_ENDPOINT, {
     method: 'POST',
     headers: {
